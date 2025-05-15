@@ -137,6 +137,8 @@ void AWallRunningTutorialCharacter::OnCornerTurnBegin(const FVector& CornerTurnD
 {
 	if (CornerType == ECT_Outer)
 	{
+		/* Rotate the camera away from the wall by 45 degrees. Use a camera lock-on mechanic to rotate the camera. */
+
 		TargetCameraRotation = CornerTurnDirection.Rotation();
 
 		constexpr double TargetCameraRotationYawOffset = 45.0;
@@ -158,6 +160,7 @@ void AWallRunningTutorialCharacter::OnCornerTurnBegin(const FVector& CornerTurnD
 
 void AWallRunningTutorialCharacter::OnCornerTurnEnd()
 {
+	/** Turn off the camera lockon mechanic when the character is no longer turning around a corner. */
 	bCameraLockOnActive = false;
 }
 

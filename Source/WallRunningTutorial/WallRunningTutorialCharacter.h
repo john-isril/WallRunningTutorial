@@ -21,6 +21,7 @@ class AWallRunningTutorialCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	/** Rotation for the camera to lock onto. */
 	FRotator TargetCameraRotation{};
 
 	/** Camera boom positioning the camera behind the character */
@@ -50,9 +51,11 @@ class AWallRunningTutorialCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Interpolation speed for rotating the CameraBoom to the target rotation for camera lock-ons. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float CameraLockOnInterpSpeed = 7.0f;
 
+	/** True if the camera should lock onto a target. */
 	bool bCameraLockOnActive = false;
 
 public:
@@ -63,6 +66,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	/** Returns the characters movement component casted to a UCustomCharacterMovementComponent. */
 	class UCustomCharacterMovementComponent* GetCustomCharacterMovement() const;
 		
 protected:
@@ -81,10 +85,13 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/** Called when the character is beginning to turn around a corner for wall running. */
 	virtual void OnCornerTurnBegin(const FVector& CornerTurnDirection, const ECornerType CornerType);
 
+	/** Called when the character completed turning around a corner for wall running. */
 	virtual void OnCornerTurnEnd();
 
+	/** Rotates the CameraBoom when the character's camera should lock onto a target. */
 	virtual void RotateCameraToTarget(float DeltaTime);
 
 public:

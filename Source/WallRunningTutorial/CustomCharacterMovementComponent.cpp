@@ -75,17 +75,20 @@ void UCustomCharacterMovementComponent::WallRunStop()
 
 void UCustomCharacterMovementComponent::OnCapsuleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	/* No need to process an Actor that we've already determined is non-wallrunnable. */
 	if (OtherActor == PrevNonWallrunnableActor) return;
 
 	if (CanWallRun())
 	{
+		/* Check if the hit Actor inherits from the IWallrunnableInterface. If so, the Actor can be wall run on. Store the hit result and initiate the wall run */
 		if (Cast<IWallrunnableInterface>(OtherActor))
 		{
 			WallRunHitResult = Hit;
 			InitWallRun();
 		}
 		else
-		{			
+		{
+			/* Store a pointer to this Actor to check again in the future if a hit actor is non-wall runnable.*/
 			PrevNonWallrunnableActor = OtherActor;
 		}
 	}
@@ -104,6 +107,7 @@ void UCustomCharacterMovementComponent::InitWallRun()
 
 	SetMovementMode(MOVE_Custom, CMOVE_WallRunning);
 
+	/* Save what side the wall is relative to the character. */
 	const double RightProjWallNormal = FVector::DotProduct(CharacterOwner->GetActorRightVector(), WallRunHitResult.ImpactNormal);
 	
 	WallRunSide = (RightProjWallNormal > 0.0) ? EWRS_LeftSide : EWRS_RightSide;
@@ -112,6 +116,8 @@ void UCustomCharacterMovementComponent::InitWallRun()
 
 	CalcWallRunRotation(TargetRotation);
 	
+	/* Rotate the character to the target rotation. */
+
 	static constexpr float MoveDuration = 0.2f;
 
 	const FLatentActionInfo LatentActionInfo{ 0, INDEX_NONE, TEXT("OnWallRunInitComplete"), this };
