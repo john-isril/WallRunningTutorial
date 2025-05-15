@@ -199,9 +199,13 @@ void UCustomCharacterMovementComponent::PhysWallRunning(float deltaTime, int32 I
 
 	if (WallRunHitResult.bBlockingHit)
 	{
+		/* Move the character close to the wall. Must be done to prevent the character from moving off the intended path when moving at high speeds on curved walls. */
+
 		const FVector ImpactPointToOwner{ CharacterOwner->GetActorLocation() - WallRunHitResult.ImpactPoint };
 		const double ImpactPointToOwnerProjImpactNormal{ ImpactPointToOwner.Dot(WallRunHitResult.ImpactNormal) };
 		SafeMoveUpdatedComponent(-WallRunHitResult.ImpactNormal * ImpactPointToOwnerProjImpactNormal, UpdatedComponent->GetComponentQuat(), true, WallRunHitResult);
+
+		/* Smoothly rotate the character to align with the walls orientation. */
 
 		FRotator TargetRotation{};
 		CalcWallRunRotation(TargetRotation);
